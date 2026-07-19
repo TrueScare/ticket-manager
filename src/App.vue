@@ -1,16 +1,19 @@
 <script setup>
-import TaskList from "@/components/TaskList.vue";
 import {onMounted} from "vue";
+import Header from "@/components/Header.vue";
 
 //#region lifecycle hooks
-onMounted(()=>{
+onMounted(() => {
   console.log("App wurde gemounted, hier würde ich Daten laden")
 });
 //#endregion lifecycle hooks
 </script>
 
 <template>
-  <TaskList></TaskList>
+  <div class="app-container">
+    <Header></Header>
+    <RouterView></RouterView>
+  </div>
 </template>
 
 <style scoped></style>

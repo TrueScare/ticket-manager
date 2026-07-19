@@ -1,24 +1,11 @@
 <script setup>
-import {ref, computed } from "vue";
+import { computed } from "vue";
 import TaskItem from "@/components/TaskItem.vue";
 import {useStats} from '../composables/useStats.js';
-
-//#region properties and refs
-const list = ref([
-  {
-    id: 1,
-    title: "Einkaufsliste",
-    isDone: false
-  },
-  {
-    id: 2,
-    title: "Vue lernen",
-    isDone: false
-  }
-]);
-//#endregion properties and ref
+import {useList} from "@/composables/useList.js";
 
 //#region computed
+const { list } = useList();
 const { countOpenTasks } = useStats(list)
 
 const headline = computed(() => {

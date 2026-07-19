@@ -4,16 +4,28 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["toggleDone", "itemUpdated"]);
+
 //#region functions
-function onClick(){
+function onClick() {
   emit('toggleDone', props.item)
   emit('itemUpdated', props.item)
 }
+
 //#endregion functions
 </script>
 <template>
   <li :style="{ textDecoration: item.isDone ? 'line-through' : 'none' }"
-      @click="onClick()">
-    <span>{{ item.title }}</span>
+      style="list-style-type: none;">
+    <div>
+      <span
+          @click="onClick()"
+          style="cursor: pointer"
+      >
+        {{ item.title }}
+      </span>
+      <RouterLink
+          :to="{name: 'TaskDetail', params: {id: item.id} }"
+      >details</RouterLink>
+    </div>
   </li>
 </template>
