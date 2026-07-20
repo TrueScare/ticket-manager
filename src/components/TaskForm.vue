@@ -2,16 +2,17 @@
 import {useTaskStore} from "@/stores/taskStore.js";
 import {useTaskValidation} from "@/composables/useTaskValidator.js";
 import {useDefaultItem} from "@/composables/useDefaultItem.js";
+import {ref} from "vue";
 
-let item = useDefaultItem()
+const item = ref(useDefaultItem());
 
 const taskStore = useTaskStore();
 
 function addTask() {
-  if (useTaskValidation(item)) {
-    if (taskStore.addTask(item)) {
+  if (useTaskValidation(item.value)) {
+    if (taskStore.addTask(item.value)) {
       // get next item after insert
-      item = useDefaultItem();
+      item.value = useDefaultItem();
     }
   } else {
     alert("Nope!");
