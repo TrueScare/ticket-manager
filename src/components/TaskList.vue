@@ -3,6 +3,7 @@ import { computed } from "vue";
 import TaskItem from "@/components/TaskItem.vue";
 import {useStats} from '../composables/useStats.js';
 import {useTaskStore} from "@/stores/taskStore.js";
+import TaskForm from "@/components/TaskForm.vue";
 
 //#region computed
 const taskStore = useTaskStore();
@@ -28,7 +29,7 @@ const headline = computed(() => {
 <template>
   <div>
     <h2>{{ headline }}</h2>
-
+    <TaskForm></TaskForm>
     <ul class="task-list">
       <TaskItem
           v-for="item in taskStore.list"

@@ -1,5 +1,6 @@
 import {ref} from 'vue';
 import {defineStore} from 'pinia';
+import {useTaskValidation} from "@/composables/useTaskValidator.js";
 
 export const useTaskStore = defineStore('taskStore', () => {
     const list = ref([
@@ -28,5 +29,16 @@ export const useTaskStore = defineStore('taskStore', () => {
 
     }
 
-    return {list, toggleDone, updateItem, getItemById};
+    function addTask(item) {
+        if(useTaskValidation(item)) {
+            const nextId = Math.max(...(list.value.map((task) => task.id )));
+            item.id = nextId +1;
+
+            list.value.push(item);
+            return item;
+        }
+        return false;
+    }
+
+    return {list, toggleDone, updateItem, getItemById, addTask};
 });
