@@ -1,9 +1,9 @@
 <script setup>
-import {useList} from "@/composables/useList.js";
 import {useStats} from "@/composables/useStats.js";
+import {useTaskStore} from "@/stores/taskStore.js";
 
-const { list } = useList();
-const { countOpenTasks } = useStats(list);
+const taskStore = useTaskStore();
+const { countOpenTasks } = useStats(taskStore.list);
 </script>
 <template>
   <span>Aktuell gibt es {{countOpenTasks}} offene Aufgaben.</span>

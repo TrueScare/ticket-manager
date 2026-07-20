@@ -1,14 +1,12 @@
 <script setup>
 import {useRoute} from 'vue-router';
 import {computed} from "vue";
-import {useList} from "@/composables/useList.js";
+import {useTaskStore} from "@/stores/taskStore.js";
 
-const { list } = useList();
+const taskStore = useTaskStore();
 
 const route = useRoute();
-const item = computed(() => {
-  return list.value.find(({id}) => id === parseInt(route.params.id))
-});
+const item = computed(() => taskStore.getItemById(route.params.id));
 
 const status = computed(() => {
   if(item.value.isDone){

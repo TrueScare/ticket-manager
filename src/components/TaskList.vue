@@ -2,14 +2,14 @@
 import { computed } from "vue";
 import TaskItem from "@/components/TaskItem.vue";
 import {useStats} from '../composables/useStats.js';
-import {useList} from "@/composables/useList.js";
+import {useTaskStore} from "@/stores/taskStore.js";
 
 //#region computed
-const { list } = useList();
-const { countOpenTasks } = useStats(list)
+const taskStore = useTaskStore();
+const { countOpenTasks } = useStats(taskStore.list)
 
 const headline = computed(() => {
-  if (list.value.length === 0) {
+  if (taskStore.list.length === 0) {
     return "keine Aufgaben vorhanden"
   }
   if (countOpenTasks.value > 0) {
@@ -21,13 +21,7 @@ const headline = computed(() => {
 //#endregion computed
 
 //#region functions
-function toggleDone(item) {
-  item.isDone = !item.isDone;
-}
 
-function updateItem(item) {
-  console.log("API-Call für Item Update", item);
-}
 
 //# endregion functions
 </script>
@@ -37,11 +31,11 @@ function updateItem(item) {
 
     <ul class="task-list">
       <TaskItem
-          v-for="item in list"
+          v-for="item in taskStore.list"
           :item="item"
           :key="item.id"
-          @toggle-done="toggleDone"
-          @item-updated="updateItem"
+          @toggle-done="taskStore.toggleDone"
+          @item-updated="taskStore.updateItem"
       />
     </ul>
   </div>
