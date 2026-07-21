@@ -36,7 +36,7 @@ export const useTaskStore = defineStore('taskStore', () => {
         isLoading.value = true;
         error.value = "";
         try {
-            list.value = await new Promise((resolve) => {
+            const data = await new Promise((resolve) => {
                 setTimeout(() => {
                     resolve([
                         {
@@ -52,6 +52,9 @@ export const useTaskStore = defineStore('taskStore', () => {
                     ]);
                 }, 1000);
             });
+            const existingIds = new Set(list.value.map((task => task.id)));
+
+            list.value = [...(list.value), ...(data.filter(task => !existingIds.has(task.id)))];
         } catch (e) {
             error.value = e;
         } finally {
