@@ -1,6 +1,6 @@
 import {computed} from 'vue';
 
-export function useStats(list) {
-    const countOpenTasks = computed(() => list.filter((item) => !item.isDone).length);
+export function useStats(getList) {
+    const countOpenTasks = computed(() => getList().filter((item) => !item.isDone).length);
     return {countOpenTasks};
 }

@@ -3,18 +3,10 @@ import {defineStore} from 'pinia';
 import {useTaskValidation} from "@/composables/useTaskValidator.js";
 
 export const useTaskStore = defineStore('taskStore', () => {
-    const list = ref([
-        {
-            id: 1,
-            title: "Einkaufsliste",
-            isDone: false
-        },
-        {
-            id: 2,
-            title: "Vue lernen",
-            isDone: false
-        }
-    ]);
+    const list = ref([]);
+
+    const isLoading = ref(false);
+    const error = ref("");
 
     function toggleDone(item) {
         item.isDone = !item.isDone;
@@ -30,9 +22,9 @@ export const useTaskStore = defineStore('taskStore', () => {
     }
 
     function addTask(item) {
-        if(useTaskValidation(item)) {
-            const nextId = Math.max(...(list.value.map((task) => task.id )));
-            item.id = nextId +1;
+        if (useTaskValidation(item)) {
+            const nextId = Math.max(...(list.value.map((task) => task.id)));
+            item.id = nextId + 1;
 
             list.value.push(item);
             return item;
@@ -40,5 +32,32 @@ export const useTaskStore = defineStore('taskStore', () => {
         return false;
     }
 
-    return {list, toggleDone, updateItem, getItemById, addTask};
+    async function fetchTasks() {
+        isLoading.value = true;
+        error.value = "";
+        try {
+            list.value = await new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve([
+                        {
+                            id: 1,
+                            title: "Einkaufsliste",
+                            isDone: false
+                        },
+                        {
+                            id: 2,
+                            title: "Vue lernen",
+                            isDone: false
+                        }
+                    ]);
+                }, 1000);
+            });
+        } catch (e) {
+            error.value = e;
+        } finally {
+            isLoading.value = false;
+        }
+    }
+
+    return {list, toggleDone, updateItem, getItemById, addTask, fetchTasks, isLoading, error};
 });
