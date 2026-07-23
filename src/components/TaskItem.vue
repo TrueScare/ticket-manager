@@ -1,14 +1,24 @@
 <script setup>
+import {computed} from "vue";
+
 const props = defineProps({
   item: {type: Object, required: true},
 });
 
-const emit = defineEmits(["toggleDone", "itemUpdated"]);
+const emit = defineEmits(["toggleDone", "itemUpdated", "itemDelete"]);
+
+const modalId = computed(() => {
+  return `${props.item.title}-${props.item.id}`
+})
 
 //#region functions
 function onClick() {
-  emit('toggleDone', props.item)
-  emit('itemUpdated', props.item)
+  emit('toggleDone', props.item);
+  emit('itemUpdated', props.item);
+}
+
+function onClickDelete() {
+  emit('itemDelete', props.item);
 }
 
 //#endregion functions
@@ -25,7 +35,20 @@ function onClick() {
       </span>
       <RouterLink
           :to="{name: 'TaskDetail', params: {id: item.id} }"
-      >details</RouterLink>
+      >details
+      </RouterLink>
+      <button :commandfor="modalId" command="show-modal">Löschen</button>
+
+      <dialog :id="modalId">
+        Soll die Aufgabe "{{ item.title }}" wirklich gelöscht werden?
+        <button :commandfor="modalId" command="close">abbrechen</button>
+        <button
+            :commandfor="modalId"
+            command="close"
+            @click="onClickDelete();"
+        >Löschen
+        </button>
+      </dialog>
     </div>
   </li>
 </template>

@@ -8,6 +8,8 @@ export const useTaskStore = defineStore('taskStore', () => {
     const isLoading = ref(false);
     const error = ref("");
 
+    const isInitiallyFetched = ref(false);
+
     function toggleDone(item) {
         item.isDone = !item.isDone;
     }
@@ -36,25 +38,25 @@ export const useTaskStore = defineStore('taskStore', () => {
         isLoading.value = true;
         error.value = "";
         try {
-            const data = await new Promise((resolve) => {
-                setTimeout(() => {
-                    resolve([
-                        {
-                            id: 1,
-                            title: "Einkaufsliste",
-                            isDone: false
-                        },
-                        {
-                            id: 2,
-                            title: "Vue lernen",
-                            isDone: false
-                        }
-                    ]);
-                }, 1000);
-            });
-            const existingIds = new Set(list.value.map((task => task.id)));
-
-            list.value = [...(list.value), ...(data.filter(task => !existingIds.has(task.id)))];
+            if (!isInitiallyFetched.value) {
+                list.value = await new Promise((resolve) => {
+                    setTimeout(() => {
+                        resolve([
+                            {
+                                id: 1,
+                                title: "Einkaufsliste",
+                                isDone: false
+                            },
+                            {
+                                id: 2,
+                                title: "Vue lernen",
+                                isDone: false
+                            }
+                        ]);
+                    }, 1000);
+                });
+                isInitiallyFetched.value = true;
+            }
         } catch (e) {
             error.value = e;
         } finally {
@@ -62,5 +64,9 @@ export const useTaskStore = defineStore('taskStore', () => {
         }
     }
 
-    return {list, toggleDone, updateItem, getItemById, addTask, fetchTasks, isLoading, error};
+    function removeItem(item) {
+        list.value.splice(list.value.indexOf(item), 1);
+    }
+
+    return {list, toggleDone, updateItem, getItemById, addTask, fetchTasks, isLoading, error, removeItem};
 });

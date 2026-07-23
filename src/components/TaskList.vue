@@ -49,6 +49,7 @@ const headline = computed(() => {
             :key="item.id"
             @toggle-done="taskStore.toggleDone"
             @item-updated="taskStore.updateItem"
+            @item-delete="taskStore.removeItem"
         />
       </template>
     </ul>
