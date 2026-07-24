@@ -43,15 +43,37 @@ const headline = computed(() => {
         <li>{{ taskStore.error }}</li>
       </template>
       <template v-else>
-        <TaskItem
-            v-for="item in taskStore.list"
-            :item="item"
-            :key="item.id"
-            @toggle-done="taskStore.toggleDone"
-            @item-updated="taskStore.updateItem"
-            @item-delete="taskStore.removeItem"
-        />
+        <TransitionGroup
+            name="list"
+        >
+          <TaskItem
+              v-for="item in taskStore.list"
+              :item="item"
+              :key="item.id"
+              @toggle-done="taskStore.toggleDone"
+              @item-updated="taskStore.updateItem"
+              @item-delete="taskStore.removeItem"
+          />
+        </TransitionGroup>
       </template>
     </ul>
   </div>
 </template>
+
+<style scoped>
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.list-leave-active {
+  position: absolute;
+}
+</style>

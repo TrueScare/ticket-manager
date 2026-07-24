@@ -25,7 +25,9 @@ export const useTaskStore = defineStore('taskStore', () => {
 
     function addTask(item) {
         if (useTaskValidation(item)) {
-            const nextId = Math.max(...(list.value.map((task) => task.id)));
+            const max = Math.max(...(list.value.map((task) => task.id)));
+            const nextId = max >= 0 ? max : 0;
+
             item.id = nextId + 1;
 
             list.value.push(item);
