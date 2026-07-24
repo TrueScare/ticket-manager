@@ -1,9 +1,10 @@
-<script setup>
+<script setup lang="ts">
 import {computed, onMounted} from "vue";
 import TaskItem from "@/components/TaskItem.vue";
-import {useStats} from '../composables/useStats.js';
-import {useTaskStore} from "@/stores/taskStore.js";
+import {useStats} from '@/composables/useStats.ts';
+import {useTaskStore} from "@/stores/taskStore.ts";
 import TaskForm from "@/components/TaskForm.vue";
+
 
 onMounted(() => {
   taskStore.fetchTasks();
@@ -47,12 +48,12 @@ const headline = computed(() => {
             name="list"
         >
           <TaskItem
-              v-for="item in taskStore.list"
-              :item="item"
-              :key="item.id"
+              v-for="task in taskStore.list"
+              :task="task"
+              :key="task.id"
               @toggle-done="taskStore.toggleDone"
-              @item-updated="taskStore.updateItem"
-              @item-delete="taskStore.removeItem"
+              @task-updated="taskStore.updateTask"
+              @task-delete="taskStore.removeTask"
           />
         </TransitionGroup>
       </template>

@@ -1,18 +1,18 @@
-<script setup>
-import {useTaskStore} from "@/stores/taskStore.js";
-import {useTaskValidation} from "@/composables/useTaskValidator.js";
-import {useDefaultItem} from "@/composables/useDefaultItem.js";
+<script setup lang="ts">
+import {useTaskStore} from "@/stores/taskStore.ts";
+import {useTaskValidation} from "@/composables/useTaskValidator.ts";
+import {useDefaultTask} from "@/composables/useDefaultTask.ts";
 import {ref} from "vue";
 
-const item = ref(useDefaultItem());
+const task = ref(useDefaultTask());
 
 const taskStore = useTaskStore();
 
 function addTask() {
-  if (useTaskValidation(item.value)) {
-    if (taskStore.addTask(item.value)) {
+  if (useTaskValidation(task.value)) {
+    if (taskStore.addTask(task.value)) {
       // get next item after insert
-      item.value = useDefaultItem();
+      task.value = useDefaultTask();
     }
   } else {
     alert("Nope!");
@@ -22,7 +22,7 @@ function addTask() {
 </script>
 <template>
   <form class="task-form-container">
-    <input type="text" v-model="item.title" minlength="1" required/>
+    <input type="text" v-model="task.title" minlength="1" required/>
     <button type="button" @click="addTask">hinzufügen</button>
   </form>
 </template>

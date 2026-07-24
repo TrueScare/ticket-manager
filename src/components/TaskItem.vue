@@ -1,46 +1,49 @@
-<script setup>
+<script setup lang="ts">
 import {computed} from "vue";
+import type {Task} from "@/types.ts";
 
-const props = defineProps({
-  item: {type: Object, required: true},
-});
+const props = defineProps<{ task: Task }>();
 
-const emit = defineEmits(["toggleDone", "itemUpdated", "itemDelete"]);
+const emit = defineEmits<{
+  "toggleDone": [task: Task],
+  "taskUpdated": [task: Task],
+  "taskDelete": [task: Task],
+}>();
 
 const modalId = computed(() => {
-  return `${props.item.title}-${props.item.id}`
+  return `${props.task.title}-${props.task.id}`
 })
 
 //#region functions
 function onClick() {
-  emit('toggleDone', props.item);
-  emit('itemUpdated', props.item);
+  emit('toggleDone', props.task);
+  emit('taskUpdated', props.task);
 }
 
 function onClickDelete() {
-  emit('itemDelete', props.item);
+  emit('taskDelete', props.task);
 }
 
 //#endregion functions
 </script>
 <template>
-  <li :style="{ textDecoration: item.isDone ? 'line-through' : 'none' }"
+  <li :style="{ textDecoration: task.isDone ? 'line-through' : 'none' }"
       style="list-style-type: none;">
     <div>
       <span
           @click="onClick()"
           style="cursor: pointer"
       >
-        {{ item.title }}
+        {{ task.title }}
       </span>
       <RouterLink
-          :to="{name: 'TaskDetail', params: {id: item.id} }"
+          :to="{name: 'TaskDetail', params: {id: task.id} }"
       >details
       </RouterLink>
       <button :commandfor="modalId" command="show-modal">Löschen</button>
 
       <dialog :id="modalId">
-        Soll die Aufgabe "{{ item.title }}" wirklich gelöscht werden?
+        Soll die Aufgabe "{{ task.title }}" wirklich gelöscht werden?
         <button :commandfor="modalId" command="close">abbrechen</button>
         <button
             :commandfor="modalId"

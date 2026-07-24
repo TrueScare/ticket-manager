@@ -1,7 +1,7 @@
-<script setup>
+<script setup lang="ts">
 import {useRoute} from 'vue-router';
 import {computed} from "vue";
-import {useTaskStore} from "@/stores/taskStore.js";
+import {useTaskStore} from "@/stores/taskStore.ts";
 
 const taskStore = useTaskStore();
 

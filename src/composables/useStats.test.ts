@@ -1,8 +1,9 @@
-import {useStats} from "@/composables/useStats.js";
+import {useStats} from "@/composables/useStats.ts";
 import {test, expect} from "vitest";
+import type {Task} from "@/types.ts";
 
 //#region setup
-const getMockTasks = () => [
+const getMockTasks: () => Task[] = () => [
     {
         id: 536,
         title: "Testfall 1 - offen",
@@ -20,9 +21,9 @@ const getMockTasks = () => [
     }
 ];
 
-const getMockEmptyTasks = () => [];
+const getMockEmptyTasks: () => Task[] = () => [];
 
-const getMockAllDoneTasks = () => [
+const getMockAllDoneTasks: () => Task[] = () => [
          {
         id: 536,
         title: "Testfall 1 - offen",
