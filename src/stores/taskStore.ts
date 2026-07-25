@@ -1,7 +1,7 @@
 import {ref} from 'vue';
 import {defineStore} from 'pinia';
 import {useTaskValidation} from "@/composables/useTaskValidator.ts";
-import type { Task } from '@/types';
+import type {Task} from '@/types';
 
 export const useTaskStore = defineStore('taskStore', () => {
     const list = ref<Task[]>([]);
@@ -20,7 +20,7 @@ export const useTaskStore = defineStore('taskStore', () => {
     }
 
     function getItemById(item_id: number) {
-        return list.value.find(({id}) => id === item_id)
+        return list.value.find(({id}) => id === item_id);
     }
 
     function addTask(task: Task) {
@@ -37,6 +37,9 @@ export const useTaskStore = defineStore('taskStore', () => {
     }
 
     async function fetchTasks() {
+        if (isLoading.value) {
+            return;
+        }
         isLoading.value = true;
         error.value = "";
         try {
@@ -60,7 +63,7 @@ export const useTaskStore = defineStore('taskStore', () => {
                 isInitiallyFetched.value = true;
             }
         } catch (e) {
-            if(e instanceof Error) {
+            if (e instanceof Error) {
                 error.value = e.toString();
             } else {
                 error.value = "Ein unbekannter Fehler ist aufgetreten. Bitte schauen sie in der Konsole für genauere Infos."
@@ -75,5 +78,15 @@ export const useTaskStore = defineStore('taskStore', () => {
         list.value.splice(list.value.indexOf(task), 1);
     }
 
-    return {list, toggleDone, updateTask: updateTask, getItemById, addTask, fetchTasks, isLoading, error, removeTask: removeItem};
+    return {
+        list,
+        toggleDone,
+        updateTask: updateTask,
+        getTaskById: getItemById,
+        addTask,
+        fetchTasks,
+        isLoading,
+        error,
+        removeTask: removeItem
+    };
 });
