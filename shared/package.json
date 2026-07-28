@@ -1,5 +1,5 @@
 {
   "name": "@ticket-manager/shared",
   "main": "./src/index.ts",
-  "types": "./src/types.ts"
+  "types": "./src/index.ts"
 }
