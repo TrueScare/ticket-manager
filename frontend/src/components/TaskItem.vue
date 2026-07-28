@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {computed} from "vue";
-import type {Task} from "@/types.ts";
+import type {Task} from "@ticket-manager/shared";
 
 const props = defineProps<{ task: Task }>();
 

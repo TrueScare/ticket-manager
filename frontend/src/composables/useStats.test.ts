@@ -1,6 +1,6 @@
 import {useStats} from "@/composables/useStats.ts";
 import {test, expect} from "vitest";
-import type {Task} from "@/types.ts";
+import type {Task} from "@ticket-manager/shared";
 
 //#region setup
 const getMockTasks: () => Task[] = () => [

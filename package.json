@@ -1,0 +1,28 @@
+{
+  "name": "ticket-manager",
+  "scripts": {
+    "dev": "concurrently --kill-others 'npm run dev --prefix ./frontend' 'npm run dev --prefix ./backend'",
+    "build": "concurrently 'npm run build --prefix ./frontend' 'npm run build --prefix ./backend'",
+    "type-check": "concurrently 'npm run type-check --prefix ./frontend' 'npm run type-check --prefix ./backend'"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.4",
+    "typescript": "npm:@typescript/typescript6@^6.0.2"
+  },
+  "workspaces": [
+    "frontend",
+    "backend",
+    "shared"
+  ],
+  "extends": "@tsconfig/node26/tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "./dist"
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "allowScripts": {
+    "esbuild@0.28.1": true
+  }
+}

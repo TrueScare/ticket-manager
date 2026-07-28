@@ -1,7 +1,8 @@
 import {ref} from 'vue';
 import {defineStore} from 'pinia';
 import {useTaskValidation} from "@/composables/useTaskValidator.ts";
-import type {Task} from '@/types';
+import type {Task} from "@ticket-manager/shared";
+
 
 export const useTaskStore = defineStore('taskStore', () => {
     const list = ref<Task[]>([]);

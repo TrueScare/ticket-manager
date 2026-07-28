@@ -1,12 +1,13 @@
 {
-  "name": "backend",
+  "name": "@ticket-manager/backend",
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
   "scripts": {
     "dev": "tsx src/index.ts",
     "build": "npx tsc",
-    "start": "node ./dist/index.js"
+    "start": "node ./dist/index.js",
+    "type-check": "npx tsc --noEmit"
   },
   "keywords": [],
   "type": "module",
@@ -23,5 +24,6 @@
   },
   "allowScripts": {
     "esbuild@0.28.1": true
-  }
+  },
+  "references": [{ "path": "../shared" }]
 }

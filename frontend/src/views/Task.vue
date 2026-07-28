@@ -2,7 +2,7 @@
 import {useRoute} from 'vue-router';
 import {computed} from "vue";
 import {useTaskStore} from "@/stores/taskStore.ts";
-import type {Task} from "@/types.ts";
+import type {Task} from "@ticket-manager/shared";
 
 const taskStore = useTaskStore();
 
