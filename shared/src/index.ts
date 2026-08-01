@@ -1,2 +1,2 @@
-export * from "./validation/taskvalidation";
+export {validateTask} from "./validation/taskvalidation";
 export * from "./types";
