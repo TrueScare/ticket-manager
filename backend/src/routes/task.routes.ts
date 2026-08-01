@@ -1,62 +1,52 @@
 import {Router, Request, Response} from "express";
 import {Task, validateTask} from "@ticket-manager/shared";
+import {addTask, deleteTask, getAllTasks, getTaskById, updateTask} from "../database/task.js";
 
 const router = Router();
-const list: Task[] = [
-    {
-        id: 1,
-        title: "Einkaufsliste",
-        isDone: false
-    },
-    {
-        id: 2,
-        title: "Vue lernen",
-        isDone: false
-    }
-];
 
-router.get('/', (req: Request, res: Response) => {
-    return res.json({details: list})
+router.get('/', async (req: Request, res: Response) => {
+    const tasks = await getAllTasks();
+    return res.json({tasks});
 });
 
-router.get('/:id', (req: Request, res: Response) => {
-    const task = list.find(task => task.id === parseInt(<string>req.params.id));
+router.get('/:id', async (req: Request, res: Response) => {
+    const task = await getTaskById(parseInt(<string>req.params.id));
     if (!task) {
-        return res.status(404).json({details: `Task with id not found. Given id: ${req.params.id}`});
+        return res.status(404).json({message: `Task with id not found. Given id: ${req.params.id}`});
     }
-    return res.status(200).json({details: task});
+    return res.status(200).json({task});
 });
 
-router.post('/', (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response) => {
     const task: Task = req.body;
-    if(!task || !validateTask(task)){
-        return res.status(422).json({details: `Invalid format for task: ${task}, ${req.body}`});
+    if (!task || !validateTask(task)) {
+        return res.status(422).json({message: `Invalid format for task: ${task}, ${req.body}`});
     }
-    list.push(task);
-    return res.status(201).json({details: task});
+    const db_task = await addTask(task);
+    return res.status(201).json({task: db_task});
 });
 
-router.put('/:id', (req: Request, res: Response) => {
-    const task = list.find(({id}) => id === parseInt(<string>req.params.id));
+router.put('/:id', async (req: Request, res: Response) => {
+    const task = await getTaskById(parseInt(<string>req.params.id));
     if (!task) {
-        return res.status(404).json({details: `Kein Task vorhanden für id: ${req.params.id}`});
+        return res.status(404).json({message: `Kein Task vorhanden für id: ${req.params.id}`});
     }
     const updatedTask: Task = req.body;
     if (!validateTask(updatedTask)) {
-        return res.status(422).json({details: `Invalid format for task: ${task}`});
+        return res.status(422).json({message: `Invalid format for task: ${task}`});
     }
-    list[list.indexOf(task)] = updatedTask;
-    return res.status(200).json({details: task});
+    const db_task = await updateTask(task);
+    return res.status(200).json({task: db_task});
 });
 
-router.delete('/:id', (req: Request, res: Response) => {
-    const task: Task | undefined = list.find(({id}) => id === parseInt(<string>req.params.id));
+router.delete('/:id', async (req: Request, res: Response) => {
+    const task: Task | undefined = await getTaskById(parseInt(<string>req.params.id));
     if (!task) {
-        return res.status(404).json({details: `Kein Task vorhanden für id: ${req.params.id}`});
+        return res.status(404).json({message: `Kein Task vorhanden für id: ${req.params.id}`});
     }
 
-    list.splice(list.indexOf(task), 1);
-    return res.status(200).json({details: task});
+    const db_task = await deleteTask(task);
+    return res.status(200).json({task: db_task});
 });
 
 export default router;

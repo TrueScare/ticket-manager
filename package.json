@@ -24,5 +24,8 @@
   ],
   "allowScripts": {
     "esbuild@0.28.1": true
+  },
+  "dependencies": {
+    "pg-promise": "^12.7.0"
   }
 }
