@@ -14,48 +14,66 @@ export const useTaskStore = defineStore('taskStore', () => {
 
     const isInitiallyFetched = ref<boolean>(false);
 
-    async function toggleDone(task: Task){
+    async function toggleDone(task: Task) {
         task.isDone = !task.isDone;
         return await updateTask(task);
     }
 
     async function updateTask(task: Task) {
-        const response = await axios.put<ApiResponse<Task>>(api_url + task.id, task);
-        const index = list.value.findIndex((element:Task) => task.id === element.id);
-        list.value[index] = response.data.details;
-        return response.data.details;
+        return handleFetch(async () => {
+            const response = await axios.put<ApiResponse<Task>>(api_url + task.id, task);
+            const index = list.value.findIndex((element: Task) => task.id === element.id);
+            list.value[index] = response.data.details;
+            return response.data.details;
+        });
     }
 
     async function getItemById(item_id: number) {
-        const reponse = await axios.get<ApiResponse<Task>>(api_url + item_id);
-        return reponse.data.details;
+        return handleFetch(async () => {
+            const reponse = await axios.get<ApiResponse<Task>>(api_url + item_id);
+            return reponse.data.details;
+        });
     }
 
     async function addTask(task: Task) {
-        if (useTaskValidation(task)) {
+        return handleFetch(async () => {
+            if (useTaskValidation(task)) {
+                const response = await axios.post<ApiResponse<Task>>(api_url, task);
+                const db_task = response.data.details;
 
-            const response = await axios.post<ApiResponse<Task>>(api_url, task);
-            const db_task = response.data.details;
+                list.value.push(db_task);
 
-            list.value.push(db_task);
-
-            return db_task;
-        }
-        return false;
+                return db_task;
+            }
+            return false;
+        });
     }
 
     async function fetchTasks() {
+        handleFetch(async () => {
+            if (!isInitiallyFetched.value) {
+                const response = await axios.get<ApiResponse<Task[]>>(api_url);
+                list.value = response.data.details;
+                isInitiallyFetched.value = true;
+            }
+        });
+    }
+
+    async function removeItem(task: Task) {
+        handleFetch(async () => {
+            const response = await axios.delete(api_url + task.id);
+            list.value.splice(list.value.indexOf(response.data.details.id), 1);
+        });
+    }
+
+    function handleFetch<T>(fetchFunction: () => Promise<T>) {
         if (isLoading.value) {
             return;
         }
         isLoading.value = true;
         error.value = "";
         try {
-            if (!isInitiallyFetched.value) {
-                const response = await axios.get<ApiResponse<Task[]>>(api_url);
-                list.value = response.data.details;
-                isInitiallyFetched.value = true;
-            }
+            return fetchFunction();
         } catch (e) {
             if (e instanceof Error) {
                 error.value = e.toString();
@@ -66,11 +84,6 @@ export const useTaskStore = defineStore('taskStore', () => {
         } finally {
             isLoading.value = false;
         }
-    }
-
-    async function removeItem(task: Task) {
-        const response = await axios.delete(api_url + task.id);
-        list.value.splice(list.value.indexOf(task), 1);
     }
 
     return {
