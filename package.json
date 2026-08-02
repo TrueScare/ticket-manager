@@ -26,6 +26,9 @@
     "esbuild@0.28.1": true
   },
   "dependencies": {
+    "@types/cors": "^2.8.19",
+    "axios": "^1.19.0",
+    "cors": "^2.8.6",
     "pg-promise": "^12.7.0"
   }
 }

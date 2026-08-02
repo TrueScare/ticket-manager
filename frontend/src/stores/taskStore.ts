@@ -1,10 +1,12 @@
 import {ref} from 'vue';
 import {defineStore} from 'pinia';
 import {useTaskValidation} from "@/composables/useTaskValidator.ts";
-import type {Task} from "@ticket-manager/shared";
-
+import type {ApiResponse, Task} from "@ticket-manager/shared";
+import axios from "axios";
 
 export const useTaskStore = defineStore('taskStore', () => {
+    const api_url = import.meta.env.VITE_API_URL + 'tasks/';
+
     const list = ref<Task[]>([]);
 
     const isLoading = ref<boolean>(false);
@@ -12,27 +14,32 @@ export const useTaskStore = defineStore('taskStore', () => {
 
     const isInitiallyFetched = ref<boolean>(false);
 
-    function toggleDone(task: Task) {
+    async function toggleDone(task: Task){
         task.isDone = !task.isDone;
+        return await updateTask(task);
     }
 
-    function updateTask(task: Task) {
-        console.log("API-Call für Item Update", task);
+    async function updateTask(task: Task) {
+        const response = await axios.put<ApiResponse<Task>>(api_url + task.id, task);
+        const index = list.value.findIndex((element:Task) => task.id === element.id);
+        list.value[index] = response.data.details;
+        return response.data.details;
     }
 
-    function getItemById(item_id: number) {
-        return list.value.find(({id}) => id === item_id);
+    async function getItemById(item_id: number) {
+        const reponse = await axios.get<ApiResponse<Task>>(api_url + item_id);
+        return reponse.data.details;
     }
 
-    function addTask(task: Task) {
+    async function addTask(task: Task) {
         if (useTaskValidation(task)) {
-            const max = Math.max(...(list.value.map((task: Task) => task.id)));
-            const nextId = max >= 0 ? max : 0;
 
-            task.id = nextId + 1;
+            const response = await axios.post<ApiResponse<Task>>(api_url, task);
+            const db_task = response.data.details;
 
-            list.value.push(task);
-            return task;
+            list.value.push(db_task);
+
+            return db_task;
         }
         return false;
     }
@@ -45,22 +52,8 @@ export const useTaskStore = defineStore('taskStore', () => {
         error.value = "";
         try {
             if (!isInitiallyFetched.value) {
-                list.value = await new Promise<Task[]>((resolve) => {
-                    setTimeout(() => {
-                        resolve([
-                            {
-                                id: 1,
-                                title: "Einkaufsliste",
-                                isDone: false
-                            },
-                            {
-                                id: 2,
-                                title: "Vue lernen",
-                                isDone: false
-                            }
-                        ]);
-                    }, 1000);
-                });
+                const response = await axios.get<ApiResponse<Task[]>>(api_url);
+                list.value = response.data.details;
                 isInitiallyFetched.value = true;
             }
         } catch (e) {
@@ -75,7 +68,8 @@ export const useTaskStore = defineStore('taskStore', () => {
         }
     }
 
-    function removeItem(task: Task) {
+    async function removeItem(task: Task) {
+        const response = await axios.delete(api_url + task.id);
         list.value.splice(list.value.indexOf(task), 1);
     }
 

@@ -17,7 +17,6 @@ const modalId = computed(() => {
 //#region functions
 function onClick() {
   emit('toggleDone', props.task);
-  emit('taskUpdated', props.task);
 }
 
 function onClickDelete() {

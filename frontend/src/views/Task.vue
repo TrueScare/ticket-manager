@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import {useRoute} from 'vue-router';
-import {computed} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {useTaskStore} from "@/stores/taskStore.ts";
 import type {Task} from "@ticket-manager/shared";
+
+onMounted(async () => {
+  task.value = await taskStore.getTaskById(parseInt(<string>route.params.id));
+});
+
+const task = ref<Task>();
 
 const taskStore = useTaskStore();
 
 const route = useRoute();
-
-const task = computed<Task | undefined>(() => taskStore.getTaskById(parseInt(<string>route.params.id)));
 
 const status = computed(() => {
   if(!task.value){

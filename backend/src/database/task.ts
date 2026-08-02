@@ -10,11 +10,11 @@ async function getTaskById(id: number): Promise<Task> {
 }
 
 async function addTask(task: Task): Promise<Task> {
-    return await db.one('INSERT INTO task(title, isDone) values ($1, $2) RETURNING *', [task.title, task.isDone]);
+    return await db.one('INSERT INTO task(title, "isDone") values ($1, $2) RETURNING *', [task.title, task.isDone]);
 }
 
 async function updateTask(task: Task): Promise<Task> {
-    return await db.one('UPDATE task set title  = $1, isDone = $2  where id = $3 RETURNING *', [task.title, task.isDone, task.id]);
+    return await db.one('UPDATE task set title  = $1, "isDone" = $2  where id = $3 RETURNING *', [task.title, task.isDone, task.id]);
 }
 
 async function deleteTask(task: Task): Promise<Task> {
