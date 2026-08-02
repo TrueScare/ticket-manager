@@ -20,7 +20,7 @@ export const useTaskStore = defineStore('taskStore', () => {
     }
 
     async function updateTask(task: Task) {
-        return handleFetch(async () => {
+        return await handleFetch(async () => {
             const response = await axios.put<ApiResponse<Task>>(api_url + task.id, task);
             const index = list.value.findIndex((element: Task) => task.id === element.id);
             list.value[index] = response.data.details;
@@ -29,14 +29,14 @@ export const useTaskStore = defineStore('taskStore', () => {
     }
 
     async function getItemById(item_id: number) {
-        return handleFetch(async () => {
+        return await handleFetch(async () => {
             const reponse = await axios.get<ApiResponse<Task>>(api_url + item_id);
             return reponse.data.details;
         });
     }
 
     async function addTask(task: Task) {
-        return handleFetch(async () => {
+        return await handleFetch(async () => {
             if (useTaskValidation(task)) {
                 const response = await axios.post<ApiResponse<Task>>(api_url, task);
                 const db_task = response.data.details;
@@ -50,7 +50,11 @@ export const useTaskStore = defineStore('taskStore', () => {
     }
 
     async function fetchTasks() {
-        handleFetch(async () => {
+        if (isLoading.value) {
+            return;
+        }
+        await handleFetch(async () => {
+
             if (!isInitiallyFetched.value) {
                 const response = await axios.get<ApiResponse<Task[]>>(api_url);
                 list.value = response.data.details;
@@ -60,20 +64,17 @@ export const useTaskStore = defineStore('taskStore', () => {
     }
 
     async function removeItem(task: Task) {
-        handleFetch(async () => {
+        await handleFetch(async () => {
             const response = await axios.delete(api_url + task.id);
             list.value.splice(list.value.indexOf(response.data.details.id), 1);
         });
     }
 
-    function handleFetch<T>(fetchFunction: () => Promise<T>) {
-        if (isLoading.value) {
-            return;
-        }
+    async function handleFetch<T>(fetchFunction: () => Promise<T>) {
         isLoading.value = true;
         error.value = "";
         try {
-            return fetchFunction();
+            return await fetchFunction();
         } catch (e) {
             if (e instanceof Error) {
                 error.value = e.toString();
