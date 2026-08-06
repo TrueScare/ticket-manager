@@ -2,6 +2,7 @@ import express, {Response, Request} from 'express';
 import dotenv from 'dotenv';
 import taskRoutes from "./routes/task.routes.js";
 import cors from 'cors';
+import errorHandler from "./middleware/errorHandler.js";
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ server.get("/", (req: Request, res: Response) => {
 
 server.use("/tasks", taskRoutes);
 
+server.use(errorHandler);
 
 server.listen(port, () => {
     console.log("Server is running on port", port);
